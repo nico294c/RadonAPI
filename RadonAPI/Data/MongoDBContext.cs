@@ -14,5 +14,7 @@ namespace RadonAPI.Data
         }
 
         public IMongoCollection<Log> Logs => _database.GetCollection<Log>("Logs");
+        public IMongoCollection<Customer> Customers => _database.GetCollection<Customer>("Customers");
+        public IMongoCollection<Datalogger> Dataloggers => _database.GetCollection<Datalogger>("Dataloggers");
     }
 }

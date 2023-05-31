@@ -11,7 +11,16 @@
 
         [BsonElement("date")]
         [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
-        public DateTime Time { get; set; } = new DateTime(DateTime.Now.Ticks);
+        public DateTime Time { get; set; } = new DateTime(
+            DateTime.Now.Year,
+            DateTime.Now.Month,
+            DateTime.Now.Day,
+            DateTime.Now.Hour,
+            DateTime.Now.Minute,
+            DateTime.Now.Second);
+
+        [BsonElement("serialnumber")]
+        public string Serialnumber { get; set; }
 
         [BsonElement("outside")]
         public Outside Outside { get; set;}
