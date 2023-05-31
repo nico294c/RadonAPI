@@ -23,63 +23,108 @@ namespace RadonAPI.Controllers
 
         // GET: api/<LogsController>
         [HttpGet]
-        public async Task<IEnumerable<Log>> Get()
+        public async Task<IActionResult> Get()
         {
-            return (IEnumerable<Log>)await _context.Logs.Find(_ => true).ToListAsync();
+            try
+            {
+                var logs = await _context.Logs.Find(_ => true).ToListAsync();
+                return Ok(logs);
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions that occur during the database operation
+                return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while retrieving logs: {ex.Message}");
+            }
         }
+
 
         // GET api/<LogsController>/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Log>> Get(string id)
         {
-            var log = await _context.Logs.Find(l => l.Id == id).FirstOrDefaultAsync();
-
-            if (log == null)
+            try
             {
-                return NotFound();
-            }
+                var log = await _context.Logs.Find(l => l.Id == id).SingleOrDefaultAsync();
 
-            return log;
+                if (log == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(log);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while retrieving log {id}: {ex.Message}");
+            }
         }
 
         // POST api/<LogsController>
         [HttpPost]
         public async Task<ActionResult<Log>> Create(Log log)
         {
-            await _context.Logs.InsertOneAsync(log);
-            return CreatedAtRoute(new { id = log.Id }, log);
+            try
+            {
+                await _context.Logs.InsertOneAsync(log);
+
+                return CreatedAtAction(nameof(Get), new { id = log.Id }, log);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while inserting a log: {ex.Message}");
+            }
+            
         }
 
         // PUT api/<LogsController>/5
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id, Log logInput)
         {
-            var log = await _context.Logs.Find(l => l.Id == id).FirstOrDefaultAsync();
-
-            if (log == null)
+            try
             {
-                return NotFound();
+                if (logInput == null || string.IsNullOrEmpty(id))
+                {
+                    return BadRequest("Invalid log or log ID");
+                }
+
+                var existingLog = await _context.Logs.Find(l => l.Id == id).SingleOrDefaultAsync();
+
+                if (existingLog == null)
+                {
+                    return NotFound();
+                }
+
+                await _context.Logs.ReplaceOneAsync(l => l.Id == id, logInput);
+
+                return NoContent();
             }
-
-            await _context.Logs.ReplaceOneAsync(l => l.Id == id, logInput);
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while modifying log {id}: {ex.Message}");
+            }
         }
 
         // DELETE api/<LogsController>/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            var log = await _context.Logs.Find(l => l.Id == id).FirstOrDefaultAsync();
-
-            if (log == null)
+            try
             {
-                return NotFound();
+                var log = await _context.Logs.Find(l => l.Id == id).SingleOrDefaultAsync();
+
+                if (log == null)
+                {
+                    return NotFound();
+                }
+
+                await _context.Logs.DeleteOneAsync(l => l.Id == id);
+
+                return NoContent();
             }
-
-            await _context.Logs.DeleteOneAsync(l => l.Id == id);
-
-            return NoContent();
+            catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while deleting log {id}: {ex.Message}");
+            }
         }
     }
 }
