@@ -8,6 +8,9 @@
         [BsonElement("serialnumber")]
         public string Serialnumber { get; set; }
 
+        [BsonElement("name")]
+        public string Name { get; set; }
+
         [BsonElement("location")]
         public string? Location { get; set; }
     }
