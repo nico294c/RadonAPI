@@ -13,6 +13,13 @@ builder.Services.AddSingleton<MongoDBContext>(serviceProvider =>
     return new MongoDBContext(settings.ConnectionString, settings.DatabaseName);
 });
 
+builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+{
+    builder.AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader();
+}));
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -31,7 +38,7 @@ else
     app.UseHttpsRedirection();
 }
 
-app.UseCors();
+app.UseCors("MyPolicy");
 
 app.UseAuthorization();
 
