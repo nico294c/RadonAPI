@@ -40,11 +40,11 @@ namespace RadonAPI.Controllers
 
         // GET api/<LogsController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Log>> Get(string id)
+        public async Task<ActionResult<Log>> Get(string serialnumber)
         {
             try
             {
-                var log = await _context.Logs.Find(l => l.Id == id).SingleOrDefaultAsync();
+                var log = await _context.Logs.Find(l => l.Serialnumber == serialnumber).ToListAsync();
 
                 if (log == null)
                 {
@@ -55,7 +55,7 @@ namespace RadonAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while retrieving log {id}: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while retrieving logs from datalogger {serialnumber}: {ex.Message}");
             }
         }
 
