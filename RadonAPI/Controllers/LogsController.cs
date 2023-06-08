@@ -39,7 +39,7 @@ namespace RadonAPI.Controllers
 
 
         // GET api/<LogsController>/5
-        [HttpGet("{id}")]
+        [HttpGet("{serialnumber}")]
         public async Task<ActionResult<Log>> Get(string serialnumber)
         {
             try
