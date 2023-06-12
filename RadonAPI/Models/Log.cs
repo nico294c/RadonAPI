@@ -11,7 +11,7 @@
 
         [BsonElement("date")]
         [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
-        public DateTime Time { get; set; } = new DateTime(
+        public DateTime DateTime { get; set; } = new DateTime(
             DateTime.Now.Year,
             DateTime.Now.Month,
             DateTime.Now.Day,
